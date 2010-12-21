@@ -58,6 +58,8 @@ public abstract class HttpWorker implements Callable<Void>
 			sendResponse(response, socket.getOutputStream());
 			socket.close();
 		}
+		//Log
+		server.getAccessLogger().log(socket.getInetAddress().getHostAddress(), request, response);
 
 		// We do not return anything here.
 		return null;

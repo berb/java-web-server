@@ -33,5 +33,12 @@ public interface HttpServer
 	 * @return
 	 */
 	public String getServerSignature();
+	
+	/**
+	 * Returns the signature of the webserver.
+	 * 
+	 * @return
+	 */
+	public AccessLogger getAccessLogger();
 
 }

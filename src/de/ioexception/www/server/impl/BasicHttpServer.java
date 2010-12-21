@@ -1,5 +1,6 @@
 package de.ioexception.www.server.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -7,6 +8,7 @@ import java.net.SocketException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import de.ioexception.www.server.AccessLogger;
 import de.ioexception.www.server.HttpServer;
 
 /**
@@ -26,7 +28,9 @@ public class BasicHttpServer implements HttpServer
 
 	private final ExecutorService workerPool;
 	private final ExecutorService dispatcherService;
+	private final ExecutorService loggingService;
 	private final ServerSocket serverSocket;
+	private final AccessLogger accessLogger;
 
 	
 	/**
@@ -51,6 +55,8 @@ public class BasicHttpServer implements HttpServer
 			serverSocket = new ServerSocket(port);
 			workerPool = Executors.newFixedThreadPool(16);
 			dispatcherService = Executors.newSingleThreadExecutor();
+			loggingService = Executors.newSingleThreadExecutor();
+			accessLogger = new BasicAccessLogger(new File("log/access.log"));
 		}
 		catch (IOException e)
 		{
@@ -69,6 +75,7 @@ public class BasicHttpServer implements HttpServer
 	public void start()
 	{
 		running = true;
+		loggingService.submit(accessLogger);
 		// Initiate the main server loop accepting incoming connections.
 		dispatcherService.submit(new Runnable()
 		{
@@ -121,6 +128,12 @@ public class BasicHttpServer implements HttpServer
 	public String getServerSignature()
 	{
 		return BasicHttpServer.SERVER_SIGNATURE;
+	}
+
+	@Override
+	public AccessLogger getAccessLogger()
+	{
+		return accessLogger;
 	}
 
 }
