@@ -2,6 +2,8 @@ package de.ioexception.www.server;
 
 import java.net.Socket;
 
+import de.ioexception.www.server.log.AccessLogger;
+
 /**
  * A basic HTTP server interface.
  * 

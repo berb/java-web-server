@@ -8,8 +8,10 @@ import java.net.SocketException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import de.ioexception.www.server.AccessLogger;
 import de.ioexception.www.server.HttpServer;
+import de.ioexception.www.server.log.AccessLogger;
+import de.ioexception.www.server.log.impl.BufferedFileAccessLogger;
+import de.ioexception.www.server.log.impl.ConsoleAccessLogger;
 
 /**
  * A simple HTTP server implementation.
@@ -56,7 +58,8 @@ public class BasicHttpServer implements HttpServer
 			workerPool = Executors.newFixedThreadPool(16);
 			dispatcherService = Executors.newSingleThreadExecutor();
 			loggingService = Executors.newSingleThreadExecutor();
-			accessLogger = new BasicAccessLogger(new File("log/access.log"));
+//			accessLogger = new BufferedFileAccessLogger(new File("log/access.log"));
+			accessLogger = new ConsoleAccessLogger();
 		}
 		catch (IOException e)
 		{
