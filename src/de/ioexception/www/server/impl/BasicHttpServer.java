@@ -8,6 +8,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import de.ioexception.www.server.HttpServer;
+import de.ioexception.www.server.cache.Cache;
+import de.ioexception.www.server.cache.EntityCacheEntry;
+import de.ioexception.www.server.cache.impl.LRUCache;
 
 /**
  * A simple HTTP server implementation.
@@ -27,6 +30,8 @@ public class BasicHttpServer implements HttpServer
 	private final ExecutorService workerPool;
 	private final ExecutorService dispatcherService;
 	private final ServerSocket serverSocket;
+	
+	private final Cache<String, EntityCacheEntry> cache = new LRUCache<String, EntityCacheEntry>(100);
 
 	
 	/**
@@ -62,7 +67,8 @@ public class BasicHttpServer implements HttpServer
 	@Override
 	public void dispatchRequest(Socket socket)
 	{
-		workerPool.submit(new BasicHttpWorker(socket, this));
+//		workerPool.submit(new BasicHttpWorker(socket, this));
+		workerPool.submit(new CachingHttpWorker(socket, this,cache));
 	}
 
 	@Override
